@@ -19,13 +19,19 @@ body {
 
 /* Make headers more prominent */
 h1 {
-    background: linear-gradient(45deg, #b08dff, #f7d273); /* Purple to Gold gradient */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #b08dff !important; /* Purple text */
+    -webkit-text-stroke: 2px #f7d273; /* Gold border stroke */
+    paint-order: stroke fill;
 }
 
 h2, h3 {
     color: #f7d273; /* Soft gold for contrast against green */
+}
+
+/* Ensure tab headers (Scan Menu / Staff Feedback) are the same prominent color */
+button[data-baseweb="tab"] p {
+    color: #f7d273 !important;
+    font-weight: bold;
 }
 
 /* Hide streamlit specific parts for app-like feel */
@@ -36,30 +42,32 @@ footer {visibility: hidden;}
 /* Large buttons for easy touch interaction */
 /* Force all button text and backgrounds for better contrast */
 [data-testid="stBaseButton-secondary"] {
-    background-color: #f7d273 !important; /* Gold background for maximum pop against green */
-    color: #0d3b2e !important; /* Deep Green inner element color */
-    border: 3px solid #f7d273 !important; 
+    background-color: #1e6b52 !important; /* Green Button */
+    border: 3px solid #f7d273 !important; /* Gold Border */
     border-radius: 12px !important;
 }
 
 /* Force emojis and inner text to strictly match the contrasting color */
 [data-testid="stBaseButton-secondary"] * {
-    color: #0d3b2e !important; 
+    color: #f7d273 !important; /* Gold text inside button */
 }
 [data-testid="stBaseButton-secondary"] p {
-    color: #0d3b2e !important; 
+    color: #f7d273 !important; 
     font-size: 32px !important;
     font-weight: 900 !important; /* Extra bold */
 }
 
 [data-testid="stBaseButton-secondary"]:hover {
-    background-color: #ffb300 !important; /* Brighter gold on hover */
-    color: #0d3b2e !important;
+    background-color: #278c6b !important; /* Lighter green on hover */
+    color: #ffffff !important;
     border: 3px solid #ffffff !important;
+}
+[data-testid="stBaseButton-secondary"]:hover * {
+    color: #ffffff !important; 
 }
 
 [data-testid="stBaseButton-secondary"]:active {
-    background-color: #d6b356 !important;
+    background-color: #18523f !important;
 }
 
 .stButton > button {
