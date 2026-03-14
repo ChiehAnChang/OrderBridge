@@ -12,6 +12,21 @@
     background-color: transparent !important;
 }
 
+/* Override Streamlit's default purple/indigo accent with gold */
+:root {
+    --primary-color: #f7d273 !important;
+}
+a, a:visited {
+    color: #f7d273 !important;
+}
+[data-testid="stAlert"] {
+    border-left-color: #f7d273 !important;
+}
+button[data-baseweb="tab"][aria-selected="true"] {
+    border-bottom-color: #f7d273 !important;
+    color: #f7d273 !important;
+}
+
 body {
     color: #ffffff;
     font-family: 'Inter', 'Roboto', sans-serif;
@@ -111,6 +126,14 @@ footer {visibility: hidden;}
     font-weight: bold;
     margin: 10px 0;
     color: #fff;
+}
+
+.order-phrase {
+    font-size: 20px;
+    color: #f7d273;
+    font-style: italic;
+    margin: 10px 0 4px;
+    text-align: center;
 }
 
 /* Icon rendering */

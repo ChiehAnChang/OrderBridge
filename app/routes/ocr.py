@@ -24,10 +24,10 @@ cultural_flags should list any pork, alcohol, shellfish, or other non-halal ingr
 
 def _get_client() -> OpenAI:
     return OpenAI(
-        api_key=os.getenv("OPENAI_API_KEY", "test"),
+        api_key=os.getenv("HF_TOKEN", ""),
         base_url=os.getenv(
-            "OPENAI_BASE_URL",
-            "https://vjioo4r1vyvcozuj.us-east-2.aws.endpoints.huggingface.cloud/v1",
+            "HF_BASE_URL",
+            "https://router.huggingface.co/v1",
         ),
     )
 
@@ -51,7 +51,7 @@ def _slugify(text: str) -> str:
 @router.post("")
 def ocr_menu(request: Request, file: UploadFile = File(...)):
     client = _get_client()
-    chat_model = os.getenv("CHAT_MODEL", "openai/gpt-oss-120b")
+    chat_model = os.getenv("HF_MODEL_NAME", "Qwen/Qwen3-VL-8B-Instruct")
     hf_endpoint = os.getenv(
         "HF_IMAGE_ENDPOINT",
         "https://jjx1c75qu4j1zt5s.us-east-1.aws.endpoints.huggingface.cloud",

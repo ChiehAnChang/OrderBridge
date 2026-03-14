@@ -89,11 +89,6 @@ with tab1:
                     if resp.status_code == 200:
                         data = resp.json()
                         items = data.get("items", [])
-                        flags = data.get("cultural_flags", [])
-
-                        if flags:
-                            for flag in flags:
-                                st.markdown(f'<div class="warning-flag">⚠️ Warning: {flag} detected</div>', unsafe_allow_html=True)
 
                         if not items:
                             st.info("No food items found. Please try again.")
@@ -103,6 +98,7 @@ with tab1:
                                 st.markdown(f'<div class="food-title">{item["name"]}</div>', unsafe_allow_html=True)
                                 if "image_url" in item and item["image_url"]:
                                     st.image(item["image_url"], use_container_width=True)
+                                st.markdown(f'<div class="order-phrase">🗣️ May I have the {item["name"]}, please? Is this halal?</div>', unsafe_allow_html=True)
                                 if "audio_url" in item and item["audio_url"]:
                                     st.audio(item["audio_url"])
                                 st.markdown('</div>', unsafe_allow_html=True)
