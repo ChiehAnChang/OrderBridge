@@ -1,7 +1,7 @@
 import os
 import requests
 from fastapi import APIRouter, File, HTTPException, UploadFile
-from app.services.classifier import INTENT_ICONS, _classify_intent
+from app.services.classifier import INTENT_ICONS, TEMPLATES, _classify_intent
 
 router = APIRouter(prefix="/stt", tags=["STT"])
 
@@ -31,9 +31,11 @@ def speech_to_text(file: UploadFile = File(...)):
     transcript = resp.json().get("text", "").strip()
     intent = _classify_intent(transcript)
     icon = INTENT_ICONS.get(intent, "❓")
+    translated_text = TEMPLATES.get(intent, {}).get("zh", transcript)
 
     return {
         "transcript": transcript,
         "intent": intent,
         "icon": icon,
+        "translated_text": translated_text,
     }

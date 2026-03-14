@@ -144,6 +144,7 @@ with tab2:
                                 "session_id": st.session_state.session_id,
                                 "speaker": "server",
                                 "original_text": transcript,
+                                "translated_text": data.get("translated_text", ""),
                                 "intent": intent_text,
                             })
                     else:
