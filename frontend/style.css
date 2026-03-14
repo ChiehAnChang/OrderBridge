@@ -22,16 +22,20 @@ h1 {
     color: #f7d273 !important; /* Gold text */
     -webkit-text-stroke: 1px #dba90f; /* Slight darker gold for depth */
     paint-order: stroke fill;
+    text-align: center !important;
 }
 
 h2, h3 {
     color: #f7d273; /* Soft gold for contrast against green */
 }
 
-/* Ensure tab headers (Scan Menu / Staff Feedback) are the same prominent color */
+/* Ensure tab headers (Scan Menu / Staff Feedback) are the same prominent color and centered */
 button[data-baseweb="tab"] p {
     color: #f7d273 !important;
     font-weight: bold;
+}
+div[data-baseweb="tab-list"] {
+    justify-content: center;
 }
 
 /* Hide streamlit specific parts for app-like feel */
