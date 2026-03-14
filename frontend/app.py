@@ -19,7 +19,7 @@ except FileNotFoundError:
 st.title("📱 Visual-Voice Connect")
 
 # Tabs for easy navigation
-tab1, tab2 = st.tabs(["Scan Menu", "Staff Audio Feedback"])
+tab1, tab2 = st.tabs(["📸 Scan Menu", "🎙️ Staff Audio Feedback"])
 
 with tab1:
     st.header("")
