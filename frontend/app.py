@@ -18,17 +18,51 @@ except FileNotFoundError:
 
 st.title("📱 Visual-Voice Connect")
 
-# Tabs for easy navigation
+# ---------- Session State Init ----------
+if "session_id" not in st.session_state:
+    st.session_state.session_id = None
+if "input_method" not in st.session_state:
+    st.session_state.input_method = None
+
+# ---------- Session Bar ----------
+with st.container():
+    col_status, col_start, col_end = st.columns([3, 1, 1])
+
+    with col_status:
+        if st.session_state.session_id:
+            st.success(f"Session #{st.session_state.session_id} active")
+        else:
+            st.info("No active session")
+
+    with col_start:
+        if st.button("▶ Start", use_container_width=True, disabled=st.session_state.session_id is not None):
+            try:
+                resp = requests.post(f"{API_BASE}/sessions/create", json={"user_language": "zh"})
+                if resp.status_code == 200:
+                    st.session_state.session_id = resp.json()["session_id"]
+                    st.rerun()
+                else:
+                    st.error("Failed to start session.")
+            except requests.exceptions.ConnectionError:
+                st.error("Cannot connect to backend.")
+
+    with col_end:
+        if st.button("⏹ End", use_container_width=True, disabled=st.session_state.session_id is None):
+            try:
+                requests.post(f"{API_BASE}/sessions/{st.session_state.session_id}/complete")
+            except requests.exceptions.ConnectionError:
+                pass
+            st.session_state.session_id = None
+            st.rerun()
+
+st.divider()
+
+# ---------- Tabs ----------
 tab1, tab2, tab3 = st.tabs(["📸 Scan Menu", "🎙️ Staff Audio Feedback", "📖 Daily Review"])
 
 with tab1:
     st.header("")
-    
     st.markdown('<div class="guide-arrow">🔽</div>', unsafe_allow_html=True)
-    
-    # Track the active input method in session state
-    if "input_method" not in st.session_state:
-        st.session_state.input_method = None
 
     col1, col2 = st.columns(2)
     with col1:
@@ -43,7 +77,7 @@ with tab1:
         img_file = st.camera_input("📷", label_visibility="collapsed")
     elif st.session_state.input_method == "upload":
         img_file = st.file_uploader("🖼️", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
-    
+
     if img_file is not None:
         st.image(img_file, caption="Captured Menu", use_container_width=True)
         if st.button("Process Menu"):
@@ -51,16 +85,16 @@ with tab1:
                 try:
                     files = {"file": ("menu.jpg", img_file.getvalue(), "image/jpeg")}
                     resp = requests.post(f"{API_BASE}/ocr", files=files)
-                    
+
                     if resp.status_code == 200:
                         data = resp.json()
                         items = data.get("items", [])
                         flags = data.get("cultural_flags", [])
-                        
+
                         if flags:
                             for flag in flags:
                                 st.markdown(f'<div class="warning-flag">⚠️ Warning: {flag} detected</div>', unsafe_allow_html=True)
-                                
+
                         if not items:
                             st.info("No food items found. Please try again.")
                         else:
@@ -69,19 +103,17 @@ with tab1:
                                 st.markdown(f'<div class="food-title">{item["name"]}</div>', unsafe_allow_html=True)
                                 if "image_url" in item and item["image_url"]:
                                     st.image(item["image_url"], use_container_width=True)
-                                # Audio playback
                                 if "audio_url" in item and item["audio_url"]:
                                     st.audio(item["audio_url"])
                                 st.markdown('</div>', unsafe_allow_html=True)
                     else:
                         st.warning("OCR endpoint is not ready yet. Generating mock visual cards...")
-                        # Mock data for frontend demo purposes
                         mock_items = [
                             {"name": "Chicken Curry", "image_url": "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&q=80"},
                             {"name": "Rice", "image_url": "https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=500&q=80"}
                         ]
                         for item in mock_items:
-                            st.markdown(f'<div class="food-card">', unsafe_allow_html=True)
+                            st.markdown('<div class="food-card">', unsafe_allow_html=True)
                             st.markdown(f'<div class="food-title">{item["name"]}</div>', unsafe_allow_html=True)
                             st.image(item["image_url"], use_container_width=True)
                             st.markdown('</div>', unsafe_allow_html=True)
@@ -90,10 +122,9 @@ with tab1:
 
 with tab2:
     st.header("")
-    
     st.markdown('<div class="guide-arrow">🔽</div>', unsafe_allow_html=True)
     audio_val = st.audio_input("", label_visibility="collapsed")
-    
+
     if audio_val is not None:
         st.audio(audio_val, format="audio/wav")
         if st.button("Translate to Icons"):
@@ -101,14 +132,24 @@ with tab2:
                 try:
                     files = {"file": ("audio.wav", audio_val.getvalue(), "audio/wav")}
                     resp = requests.post(f"{API_BASE}/stt", files=files)
-                    
+
                     if resp.status_code == 200:
                         data = resp.json()
                         intent_icon = data.get("icon", "❓")
                         intent_text = data.get("intent", "Unknown")
-                        
+                        transcript = data.get("transcript", "")
+
                         st.markdown(f'<div class="intent-icon">{intent_icon}</div>', unsafe_allow_html=True)
                         st.markdown(f'<div class="intent-text">{intent_text}</div>', unsafe_allow_html=True)
+
+                        # Auto-save turn to session
+                        if st.session_state.session_id:
+                            requests.post(f"{API_BASE}/turns/add", json={
+                                "session_id": st.session_state.session_id,
+                                "speaker": "server",
+                                "original_text": transcript,
+                                "intent": intent_text,
+                            })
                     else:
                         st.warning("STT endpoint is not ready yet. Serving mock icon response...")
                         st.markdown('<div class="intent-icon">⏳</div>', unsafe_allow_html=True)
@@ -119,16 +160,22 @@ with tab2:
 with tab3:
     st.markdown("Listen and practice phrases from today's orders.")
 
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        session_id = st.number_input("Session ID", min_value=1, step=1, value=1, label_visibility="collapsed")
-    with col2:
-        load_btn = st.button("Load")
+    sid = st.session_state.session_id
+    if sid:
+        st.info(f"Showing review for Session #{sid}")
+        load_btn = st.button("Load Review")
+        session_id_to_load = sid
+    else:
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            session_id_to_load = st.number_input("Session ID", min_value=1, step=1, value=1, label_visibility="collapsed")
+        with col2:
+            load_btn = st.button("Load")
 
     if load_btn:
         with st.spinner("Loading..."):
             try:
-                resp = requests.get(f"{API_BASE}/sessions/{session_id}/review")
+                resp = requests.get(f"{API_BASE}/sessions/{session_id_to_load}/review")
             except requests.exceptions.ConnectionError:
                 st.error("Cannot connect to backend.")
                 st.stop()
