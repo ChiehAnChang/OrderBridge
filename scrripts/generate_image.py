@@ -1,12 +1,14 @@
+import io
 import os
 import json
 import argparse
 import re
+import requests
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 from openai import OpenAI
-from huggingface_hub import InferenceClient
+from PIL import Image
 
 
 def normalize_halal(value: Any) -> str:
@@ -156,20 +158,22 @@ def generate_structured_card_content(
 
 
 def try_generate_image_hf(
-    hf_client: InferenceClient,
-    image_model: str,
+    endpoint_url: str,
     prompt: str,
     output_path: Path,
 ) -> Optional[str]:
     """
-    Generate an image using Hugging Face InferenceClient text_to_image.
+    Generate an image using a HuggingFace dedicated inference endpoint.
     Returns saved file path if successful, else None.
     """
     try:
-        image = hf_client.text_to_image(
-            prompt=prompt,
-            model=image_model,
+        response = requests.post(
+            endpoint_url,
+            headers={"Accept": "image/png", "Content-Type": "application/json"},
+            json={"inputs": prompt, "parameters": {}},
         )
+        response.raise_for_status()
+        image = Image.open(io.BytesIO(response.content))
         image.save(output_path)
         return str(output_path)
     except Exception as e:
@@ -232,17 +236,17 @@ def main() -> None:
     chat_model = os.getenv("CHAT_MODEL", "openai/gpt-oss-120b")
 
     # Hugging Face image generation settings
-    hf_token = os.getenv("HF_TOKEN")
-    hf_image_model = os.getenv("HF_IMAGE_MODEL", "stabilityai/stable-diffusion-xl-base-1.0")
+    hf_image_endpoint = os.getenv(
+        "HF_IMAGE_ENDPOINT",
+        "https://jjx1c75qu4j1zt5s.us-east-1.aws.endpoints.huggingface.cloud",
+    )
 
     print("OPENAI_API_KEY =", api_key)
     print("OPENAI_BASE_URL =", base_url)
     print("CHAT_MODEL =", chat_model)
-    print("HF_IMAGE_MODEL =", hf_image_model)
-    print("HF_TOKEN_SET =", bool(hf_token))
+    print("HF_IMAGE_ENDPOINT =", hf_image_endpoint)
 
     client = OpenAI(api_key=api_key, base_url=base_url)
-    hf_client = InferenceClient(api_key=hf_token) if hf_token else None
 
     item = load_item_from_input(args.input, args.json)
     item = enrich_item(item)
@@ -272,16 +276,12 @@ def main() -> None:
     }
 
     if not args.no_image:
-        if hf_client is None:
-            print("[WARN] HF_TOKEN is not set. Skipping image generation.")
-        else:
-            image_path = try_generate_image_hf(
-                hf_client=hf_client,
-                image_model=hf_image_model,
-                prompt=result["image_prompt"],
-                output_path=image_output_path,
-            )
-            final_output["image_path"] = image_path
+        image_path = try_generate_image_hf(
+            endpoint_url=hf_image_endpoint,
+            prompt=result["image_prompt"],
+            output_path=image_output_path,
+        )
+        final_output["image_path"] = image_path
 
     save_json(final_output, json_output_path)
 
