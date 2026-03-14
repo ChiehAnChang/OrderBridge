@@ -19,7 +19,7 @@ except FileNotFoundError:
 st.title("📱 Visual-Voice Connect")
 
 # Tabs for easy navigation
-tab1, tab2 = st.tabs(["📸 Scan Menu", "🎙️ Staff Audio Feedback"])
+tab1, tab2, tab3 = st.tabs(["📸 Scan Menu", "🎙️ Staff Audio Feedback", "📖 Daily Review"])
 
 with tab1:
     st.header("")
@@ -115,3 +115,55 @@ with tab2:
                         st.markdown('<div class="intent-text">Wait 5 minutes</div>', unsafe_allow_html=True)
                 except requests.exceptions.ConnectionError:
                     st.error("Cannot connect to backend.")
+
+with tab3:
+    st.markdown("Listen and practice phrases from today's orders.")
+
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        session_id = st.number_input("Session ID", min_value=1, step=1, value=1, label_visibility="collapsed")
+    with col2:
+        load_btn = st.button("Load")
+
+    if load_btn:
+        with st.spinner("Loading..."):
+            try:
+                resp = requests.get(f"{API_BASE}/sessions/{session_id}/review")
+            except requests.exceptions.ConnectionError:
+                st.error("Cannot connect to backend.")
+                st.stop()
+
+        if resp.status_code == 404:
+            st.warning("No records found. Showing mock data...")
+            data = {
+                "learning_summary": {
+                    "key_expressions": [
+                        {"original": "Wait a moment", "translation": "Wait 5 minutes", "icon": "⏳"},
+                        {"original": "Chicken Curry", "translation": "Chicken Curry", "icon": "🍛"},
+                    ]
+                }
+            }
+        elif resp.status_code != 200:
+            st.error(f"Request failed: {resp.status_code}")
+            st.stop()
+        else:
+            data = resp.json()
+
+        key_expressions = data.get("learning_summary", {}).get("key_expressions", [])
+
+        if not key_expressions:
+            st.info("No practice items today.")
+        else:
+            st.markdown("### Tap to Practice")
+            for idx, expr in enumerate(key_expressions):
+                st.markdown('<div class="food-card">', unsafe_allow_html=True)
+                scol1, scol2 = st.columns([1, 4])
+                with scol1:
+                    st.markdown(f'<div style="font-size:50px;">{expr.get("icon", "📝")}</div>', unsafe_allow_html=True)
+                with scol2:
+                    st.markdown(f'<div class="food-title" style="text-align:left;font-size:24px;">{expr.get("original", "")}</div>', unsafe_allow_html=True)
+                    st.markdown(f'<div style="color:#888;">{expr.get("translation", "")}</div>', unsafe_allow_html=True)
+                audio_url = expr.get("audio_url")
+                if audio_url:
+                    st.audio(audio_url)
+                st.markdown('</div>', unsafe_allow_html=True)
