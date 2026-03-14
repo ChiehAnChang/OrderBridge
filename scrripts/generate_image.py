@@ -238,11 +238,15 @@ def main() -> None:
     api_key = os.getenv("OPENAI_API_KEY", "test")
     base_url = os.getenv(
         "OPENAI_BASE_URL",
-        "https://handles-virtual-creating-introduced.trycloudflare.com/v1",
+        "https://vjioo4r1vyvcozuj.us-east-2.aws.endpoints.huggingface.cloud/v1",
     )
     chat_model = os.getenv("CHAT_MODEL", "openai/gpt-oss-120b")
     image_model = os.getenv("IMAGE_MODEL", "gpt-image-1")
 
+    print("OPENAI_API_KEY =", api_key)
+    print("OPENAI_BASE_URL =", base_url)
+    print("CHAT_MODEL =", chat_model)
+    print("IMAGE_MODEL =", image_model)
     client = OpenAI(api_key=api_key, base_url=base_url)
 
     item = load_item_from_input(args.input, args.json)
