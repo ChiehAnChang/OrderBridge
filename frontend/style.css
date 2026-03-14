@@ -35,8 +35,14 @@ footer {visibility: hidden;}
     border: 2px solid #f7d273 !important; /* Gold border for contrast */
 }
 
+/* Force emojis and inner text to be strictly white/high-contrast, avoiding Streamlit default purple/blue tint */
 [data-testid="stBaseButton-secondary"] * {
-    color: #ffffff !important; /* Force emojis and inner spans to not match background */
+    color: #ffffff !important; 
+}
+[data-testid="stBaseButton-secondary"] p {
+    color: #ffffff !important; 
+    font-size: 32px !important;
+    font-weight: bold !important;
 }
 
 [data-testid="stBaseButton-secondary"]:hover {
