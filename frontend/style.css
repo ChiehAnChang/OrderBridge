@@ -2,8 +2,17 @@
 
 /* High contrast and large fonts for accessibility */
 
+/* Target the Streamlit main app container to enforce background color */
+[data-testid="stAppViewContainer"] {
+    background-color: #0d3b2e !important; /* Deep Islamic green */
+}
+
+/* Ensure sidebar/header doesn't clash if ever enabled */
+[data-testid="stHeader"] {
+    background-color: transparent !important;
+}
+
 body {
-    background-color: #0d3b2e; /* Deep Islamic green */
     color: #ffffff;
     font-family: 'Inter', 'Roboto', sans-serif;
 }
