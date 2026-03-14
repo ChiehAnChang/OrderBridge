@@ -1,12 +1,12 @@
 import os
 import json
-import base64
 import argparse
 import re
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 from openai import OpenAI
+from huggingface_hub import InferenceClient
 
 
 def normalize_halal(value: Any) -> str:
@@ -155,36 +155,25 @@ def generate_structured_card_content(
     }
 
 
-def try_generate_image(
-    client: OpenAI,
+def try_generate_image_hf(
+    hf_client: InferenceClient,
     image_model: str,
     prompt: str,
     output_path: Path,
-    size: str = "1024x1024",
 ) -> Optional[str]:
     """
-    Try to generate an image via an OpenAI-compatible Images API.
-
-    Returns:
-        str path if saved successfully, else None
+    Generate an image using Hugging Face InferenceClient text_to_image.
+    Returns saved file path if successful, else None.
     """
     try:
-        response = client.images.generate(
-            model=image_model,
+        image = hf_client.text_to_image(
             prompt=prompt,
-            size=size,
+            model=image_model,
         )
-    except Exception as e:
-        print(f"[WARN] Image generation request failed: {e}")
-        return None
-
-    try:
-        image_b64 = response.data[0].b64_json
-        image_bytes = base64.b64decode(image_b64)
-        output_path.write_bytes(image_bytes)
+        image.save(output_path)
         return str(output_path)
     except Exception as e:
-        print(f"[WARN] Image decoding/saving failed: {e}")
+        print(f"[WARN] Hugging Face image generation failed: {e}")
         return None
 
 
@@ -232,22 +221,28 @@ def main() -> None:
     parser.add_argument("--outdir", type=str, default="outputs", help="Output directory")
     parser.add_argument("--no-image", action="store_true", help="Skip image generation")
     parser.add_argument("--max-tokens", type=int, default=500, help="Max tokens for chat completion")
-    parser.add_argument("--image-size", type=str, default="1024x1024", help="Image size, if supported")
     args = parser.parse_args()
 
+    # LLM settings (still using your OpenAI-compatible endpoint)
     api_key = os.getenv("OPENAI_API_KEY", "test")
     base_url = os.getenv(
         "OPENAI_BASE_URL",
         "https://vjioo4r1vyvcozuj.us-east-2.aws.endpoints.huggingface.cloud/v1",
     )
     chat_model = os.getenv("CHAT_MODEL", "openai/gpt-oss-120b")
-    image_model = os.getenv("IMAGE_MODEL", "gpt-image-1")
+
+    # Hugging Face image generation settings
+    hf_token = os.getenv("HF_TOKEN")
+    hf_image_model = os.getenv("HF_IMAGE_MODEL", "stabilityai/stable-diffusion-xl-base-1.0")
 
     print("OPENAI_API_KEY =", api_key)
     print("OPENAI_BASE_URL =", base_url)
     print("CHAT_MODEL =", chat_model)
-    print("IMAGE_MODEL =", image_model)
+    print("HF_IMAGE_MODEL =", hf_image_model)
+    print("HF_TOKEN_SET =", bool(hf_token))
+
     client = OpenAI(api_key=api_key, base_url=base_url)
+    hf_client = InferenceClient(api_key=hf_token) if hf_token else None
 
     item = load_item_from_input(args.input, args.json)
     item = enrich_item(item)
@@ -277,14 +272,16 @@ def main() -> None:
     }
 
     if not args.no_image:
-        image_path = try_generate_image(
-            client=client,
-            image_model=image_model,
-            prompt=result["image_prompt"],
-            output_path=image_output_path,
-            size=args.image_size,
-        )
-        final_output["image_path"] = image_path
+        if hf_client is None:
+            print("[WARN] HF_TOKEN is not set. Skipping image generation.")
+        else:
+            image_path = try_generate_image_hf(
+                hf_client=hf_client,
+                image_model=hf_image_model,
+                prompt=result["image_prompt"],
+                output_path=image_output_path,
+            )
+            final_output["image_path"] = image_path
 
     save_json(final_output, json_output_path)
 
@@ -294,10 +291,15 @@ def main() -> None:
         print(f"Image saved to: {final_output['image_path']}")
     else:
         print("No image saved.")
+
     print("\n=== Order Sentence ===")
     print(final_output["order_sentence"])
+
     print("\n=== Image Prompt ===")
     print(final_output["image_prompt"])
+
+    print("\n=== Final Output JSON ===")
+    print(json.dumps(final_output, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
