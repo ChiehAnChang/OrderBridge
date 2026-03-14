@@ -61,6 +61,38 @@ def get_turns_by_session(db: DBSession, session_id: int) -> list[models.Conversa
     )
 
 
+# ---------- Vocabulary ----------
+
+def save_vocabulary(db: DBSession, data: schemas.VocabularySave) -> models.Vocabulary:
+    vocab = models.Vocabulary(
+        session_id=data.session_id,
+        source=data.source,
+        word=data.word,
+        translation=data.translation,
+        image_url=data.image_url,
+        warning=data.warning,
+    )
+    db.add(vocab)
+    db.commit()
+    db.refresh(vocab)
+    return vocab
+
+
+def get_history_by_date(db: DBSession, date_str: str) -> list[models.Vocabulary]:
+    from datetime import date
+    try:
+        target = date.fromisoformat(date_str)
+    except ValueError:
+        return []
+    return (
+        db.query(models.Vocabulary)
+        .filter(models.Vocabulary.timestamp >= datetime(target.year, target.month, target.day, 0, 0, 0))
+        .filter(models.Vocabulary.timestamp < datetime(target.year, target.month, target.day, 23, 59, 59))
+        .order_by(models.Vocabulary.timestamp)
+        .all()
+    )
+
+
 # ---------- Helper: deserialize suggested_responses ----------
 
 def deserialize_turn(turn: models.ConversationTurn) -> schemas.ConversationTurnResponse:

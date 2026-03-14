@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.config import APP_NAME, APP_VERSION
 from app.database import init_db
-from app.routes import sessions, conversation
+from app.routes import sessions, conversation, history
 
 app = FastAPI(title=APP_NAME, version=APP_VERSION)
 
@@ -14,6 +14,7 @@ def on_startup():
 # Routers
 app.include_router(sessions.router)
 app.include_router(conversation.router)
+app.include_router(history.router)
 
 
 @app.get("/")

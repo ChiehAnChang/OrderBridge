@@ -50,6 +50,36 @@ class ConversationTurnResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+# ---------- Vocabulary / History ----------
+
+class VocabularySave(BaseModel):
+    session_id: int
+    source: str                          # ocr | speech
+    word: str
+    translation: Optional[str] = None
+    image_url: Optional[str] = None
+    warning: Optional[str] = None        # "pork" | None
+
+
+class VocabularyResponse(BaseModel):
+    vocab_id: int
+    session_id: int
+    timestamp: datetime
+    source: str
+    word: str
+    translation: Optional[str]
+    image_url: Optional[str]
+    warning: Optional[str]
+
+    model_config = {"from_attributes": True}
+
+
+class HistoryResponse(BaseModel):
+    date: str
+    total_items: int
+    items: list[VocabularyResponse]
+
+
 # ---------- Classifier ----------
 
 class ClassifyRequest(BaseModel):

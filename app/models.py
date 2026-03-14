@@ -35,3 +35,16 @@ class ConversationTurn(Base):
     final_response_text: Mapped[str] = mapped_column(Text, nullable=True)
 
     session: Mapped["Session"] = relationship("Session", back_populates="turns")
+
+
+class Vocabulary(Base):
+    __tablename__ = "vocabulary"
+
+    vocab_id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    session_id: Mapped[int] = mapped_column(Integer, ForeignKey("sessions.session_id"), nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    source: Mapped[str] = mapped_column(String(20), nullable=False)   # ocr | speech
+    word: Mapped[str] = mapped_column(Text, nullable=False)
+    translation: Mapped[str] = mapped_column(Text, nullable=True)
+    image_url: Mapped[str] = mapped_column(Text, nullable=True)
+    warning: Mapped[str] = mapped_column(String(50), nullable=True)   # pork | null
