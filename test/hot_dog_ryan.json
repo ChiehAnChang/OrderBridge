@@ -1,16 +1,7 @@
-[
-  {
-    "name": "hot dog",
-    "halal": "no",
-    "description": "grilled sausage in a bun",
-    "ingredients": ["bun", "sausage", "mustard"],
-    "price": "$5.99"
-  },
-  {
-    "name": "fries",
-    "halal": "unknown",
-    "description": "crispy deep-fried potato strips",
-    "ingredients": ["potato", "salt"],
-    "price": "$2.99"
-  }
-]
+{
+  "name": "hot dog",
+  "halal": "no",
+  "description": "grilled sausage in a bun",
+  "ingredients": ["bun", "sausage", "mustard"],
+  "price": "$5.99"
+}
