@@ -19,8 +19,8 @@ body {
 
 /* Make headers more prominent */
 h1 {
-    color: #ff5722 !important; /* Orange text */
-    -webkit-text-stroke: 2px #f7d273; /* Gold border stroke */
+    color: #f7d273 !important; /* Gold text */
+    -webkit-text-stroke: 1px #dba90f; /* Slight darker gold for depth */
     paint-order: stroke fill;
 }
 
