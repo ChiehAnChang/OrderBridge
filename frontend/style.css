@@ -19,7 +19,7 @@ body {
 
 /* Make headers more prominent */
 h1 {
-    color: #b08dff !important; /* Purple text */
+    color: #ff5722 !important; /* Orange text */
     -webkit-text-stroke: 2px #f7d273; /* Gold border stroke */
     paint-order: stroke fill;
 }
