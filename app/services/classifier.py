@@ -70,6 +70,21 @@ TEMPLATES: dict[str, dict] = {
     },
 }
 
+# ---------- Intent icons ----------
+
+INTENT_ICONS: dict[str, str] = {
+    "size_choice":          "📏",
+    "drink_choice":         "🥤",
+    "combo_choice":         "🍱",
+    "dine_in_takeout":      "🏠",
+    "spice_level":          "🌶️",
+    "quantity_confirmation": "🔢",
+    "payment_question":     "💳",
+    "unavailable_item":     "❌",
+    "clarification":        "🔁",
+    "other":                "❓",
+}
+
 # ---------- Language fallback ----------
 
 LANG_FALLBACK = "zh"
