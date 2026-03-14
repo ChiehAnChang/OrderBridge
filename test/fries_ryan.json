@@ -1,0 +1,7 @@
+{
+  "name": "fries",
+  "halal": "unknown",
+  "description": "crispy deep-fried potato strips",
+  "ingredients": ["potato", "salt"],
+  "price": "$2.99"
+}
