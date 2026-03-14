@@ -4,6 +4,13 @@ import os
 
 API_BASE = "http://localhost:8000"
 
+
+def _rerun():
+    if hasattr(st, "rerun"):
+        st.rerun()
+    else:
+        st.experimental_rerun()
+
 st.set_page_config(page_title="Visual-Voice Connect", page_icon="📱", layout="centered")
 
 # Load CSS
@@ -40,7 +47,7 @@ with st.container():
                 resp = requests.post(f"{API_BASE}/sessions/create", json={"user_language": "zh"})
                 if resp.status_code == 200:
                     st.session_state.session_id = resp.json()["session_id"]
-                    st.rerun()
+                    _rerun()
                 else:
                     st.error("Failed to start session.")
             except requests.exceptions.ConnectionError:
@@ -53,7 +60,7 @@ with st.container():
             except requests.exceptions.ConnectionError:
                 pass
             st.session_state.session_id = None
-            st.rerun()
+            _rerun()
 
 st.divider()
 
