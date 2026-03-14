@@ -3,14 +3,14 @@
 /* High contrast and large fonts for accessibility */
 
 body {
-    background-color: #121212;
+    background-color: #0d3b2e; /* Deep Islamic green */
     color: #ffffff;
     font-family: 'Inter', 'Roboto', sans-serif;
 }
 
 /* Make headers more prominent */
 h1, h2, h3 {
-    color: #ffb300; /* High contrast yellow/gold */
+    color: #f7d273; /* Soft gold for contrast against green */
 }
 
 /* Hide streamlit specific parts for app-like feel */
@@ -25,32 +25,32 @@ footer {visibility: hidden;}
     font-size: 24px !important;
     font-weight: bold;
     border-radius: 12px;
-    background-color: #ffb300;
-    color: #000000;
+    background-color: #1e6b52; /* Emerald Green */
+    color: #ffffff;
     border: none;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     margin-top: 10px;
 }
 
 .stButton > button:hover {
-    background-color: #ffca28;
-    color: #000000;
+    background-color: #278c6b;
+    color: #ffffff;
 }
 
 .stButton > button:active {
-    background-color: #ff8f00;
+    background-color: #18523f;
 }
 
 /* Camera input / audio input container styling */
-[data-testid="stCameraInput"] {
-    border: 4px solid #ffb300;
+[data-testid="stCameraInput"], [data-testid="stFileUploader"] {
+    border: 4px solid #f7d273;
     border-radius: 12px;
 }
 
 /* Food card styling */
 .food-card {
-    background-color: #1e1e1e;
-    border: 2px solid #333;
+    background-color: #164f3c; /* Slightly lighter green for cards */
+    border: 2px solid #278c6b;
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 20px;
@@ -80,7 +80,7 @@ footer {visibility: hidden;}
 .intent-text {
     font-size: 32px;
     text-align: center;
-    color: #ffb300;
+    color: #f7d273;
     font-weight: bold;
 }
 
@@ -101,7 +101,7 @@ footer {visibility: hidden;}
 
 .guide-arrow {
     font-size: 60px;
-    color: #ffb300;
+    color: #f7d273;
     text-align: center;
     animation: bounce 1.5s infinite;
     margin: 10px 0;
