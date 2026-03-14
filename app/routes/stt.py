@@ -5,7 +5,7 @@ from app.services.classifier import INTENT_ICONS, _classify_intent
 
 router = APIRouter(prefix="/stt", tags=["STT"])
 
-HF_STT_URL = "https://api-inference.huggingface.co/models/openai/whisper-large-v3"
+HF_STT_URL = "https://router.huggingface.co/hf-inference/models/openai/whisper-large-v3"
 
 
 @router.post("")
@@ -18,7 +18,10 @@ def speech_to_text(file: UploadFile = File(...)):
 
     resp = requests.post(
         HF_STT_URL,
-        headers={"Authorization": f"Bearer {hf_token}"},
+        headers={
+            "Authorization": f"Bearer {hf_token}",
+            "Content-Type": file.content_type or "audio/wav",
+        },
         data=audio_bytes,
     )
 

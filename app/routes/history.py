@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date as today_date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session as DBSession
 from app import crud, schemas
@@ -16,7 +16,7 @@ def save_to_history(data: schemas.VocabularySave, db: DBSession = Depends(get_db
 
 
 @router.get("", response_model=schemas.HistoryResponse)
-def get_history(date: str = str(date.today()), db: DBSession = Depends(get_db)):
+def get_history(date: str = str(today_date.today()), db: DBSession = Depends(get_db)):
     items = crud.get_history_by_date(db, date)
     return schemas.HistoryResponse(
         date=date,
