@@ -18,7 +18,13 @@ body {
 }
 
 /* Make headers more prominent */
-h1, h2, h3 {
+h1 {
+    background: linear-gradient(45deg, #b08dff, #f7d273); /* Purple to Gold gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h2, h3 {
     color: #f7d273; /* Soft gold for contrast against green */
 }
 
