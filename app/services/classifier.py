@@ -8,7 +8,7 @@ INTENT_RULES: list[tuple[str, list[str]]] = [
     ("drink_choice",         [r"\bdrink\b", r"\bbeverage\b", r"\bjuice\b", r"\bsoda\b", r"\bwater\b", r"\bcoffee\b", r"\btea\b"]),
     ("combo_choice",         [r"\bcombo\b", r"\bmeal deal\b", r"\bset meal\b", r"\bwith fries\b"]),
     ("dine_in_takeout",      [r"\bfor here\b", r"\bto go\b", r"\btake.?out\b", r"\bdine.?in\b", r"\beat in\b", r"\btake away\b"]),
-    ("spice_level",          [r"\bspic(y|e|iness)\b", r"\bmild\b", r"\bhot\b", r"\bextra hot\b", r"\bno spice\b"]),
+    ("spice_level",          [r"\bspic(y|e|iness)\b", r"\bmild\b", r"\bhow (hot|spicy)\b", r"\bextra hot\b", r"\bno spice\b"]),
     ("quantity_confirmation", [r"\bhow many\b", r"\bquantity\b", r"\bone or two\b", r"\bone\b.*\btwo\b", r"\bnumber\b"]),
     ("payment_question",     [r"\bpay\b", r"\bcash\b", r"\bcard\b", r"\bcredit\b", r"\bdebit\b", r"\btap\b", r"\bapple pay\b", r"\bgoogle pay\b"]),
     ("unavailable_item",     [r"\bsorry\b.*\bout\b", r"\bout of stock\b", r"\bnot available\b", r"\bwe('re| are) out\b", r"\bdon't have\b"]),
