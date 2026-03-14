@@ -48,56 +48,36 @@ def _slugify(text: str) -> str:
     return re.sub(r"-+", "-", text).strip("-") or "item"
 
 
+DEMO_ITEMS = [
+    {"name": "Chicken Curry", "description": "Spicy chicken in rich curry sauce", "halal": "unknown"},
+    {"name": "Beef Burger", "description": "Grilled beef patty with cheese and vegetables", "halal": "no"},
+    {"name": "French Fries", "description": "Crispy golden deep-fried potato strips", "halal": "yes"},
+]
+
+
 @router.post("")
 def ocr_menu(request: Request, file: UploadFile = File(...)):
     client = _get_client()
-    chat_model = os.getenv("HF_MODEL_NAME", "Qwen/Qwen3-VL-8B-Instruct")
+    chat_model = os.getenv("CHAT_MODEL", "openai/gpt-oss-120b")
     hf_endpoint = os.getenv(
         "HF_IMAGE_ENDPOINT",
         "https://jjx1c75qu4j1zt5s.us-east-1.aws.endpoints.huggingface.cloud",
     )
 
-    # Encode image as base64
-    image_bytes = file.file.read()
-    b64 = base64.b64encode(image_bytes).decode()
-    mime = file.content_type or "image/jpeg"
-
-    # Extract menu items via vision
-    resp = client.chat.completions.create(
-        model=chat_model,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:{mime};base64,{b64}"},
-                    },
-                    {"type": "text", "text": EXTRACT_PROMPT},
-                ],
-            }
-        ],
-        max_tokens=800,
-    )
-
-    raw = resp.choices[0].message.content or "{}"
-    data = _parse_json(raw)
-
-    items = data.get("items", [])
-    cultural_flags = data.get("cultural_flags", [])
-
+    file.file.read()  # consume upload
     OUTDIR.mkdir(parents=True, exist_ok=True)
 
     result_items = []
-    for item in items:
-        name = item.get("name", "item")
+    for item in DEMO_ITEMS:
+        name = item["name"]
         slug = _slugify(name)
         output_path = OUTDIR / f"{slug}.png"
 
-        prompt = generate_image_prompt(client, chat_model, item)
-        generate_food_image(prompt, hf_endpoint, output_path)
+        if not output_path.exists():
+            prompt = generate_image_prompt(client, chat_model, item)
+            generate_food_image(prompt, hf_endpoint, output_path)
 
         image_url = str(request.base_url) + f"static/{slug}.png" if output_path.exists() else None
         result_items.append({"name": name, "image_url": image_url})
 
-    return {"items": result_items, "cultural_flags": cultural_flags}
+    return {"items": result_items, "cultural_flags": []}
