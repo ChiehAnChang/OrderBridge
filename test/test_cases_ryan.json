@@ -1,0 +1,7 @@
+{
+  "name": "hot dog",
+  "halal": "unknown",
+  "description": "grilled sausage in a bun",
+  "ingredients": ["bun", "sausage", "mustard"],
+  "price": "$5.99"
+}
