@@ -19,10 +19,10 @@ except FileNotFoundError:
 st.title("📱 Visual-Voice Connect")
 
 # Tabs for easy navigation
-tab1, tab2 = st.tabs(["📸 Scan Menu", "🎙️ Staff Audio Feedback"])
+tab1, tab2 = st.tabs(["Scan Menu", "Staff Audio Feedback"])
 
 with tab1:
-    st.header("📸")
+    st.header("")
     
     st.markdown('<div class="guide-arrow">🔽</div>', unsafe_allow_html=True)
     
@@ -89,10 +89,10 @@ with tab1:
                     st.error("Cannot connect to backend.")
 
 with tab2:
-    st.header("🎙️")
+    st.header("")
     
     st.markdown('<div class="guide-arrow">🔽</div>', unsafe_allow_html=True)
-    audio_val = st.audio_input("🎙️", label_visibility="collapsed")
+    audio_val = st.audio_input("", label_visibility="collapsed")
     
     if audio_val is not None:
         st.audio(audio_val, format="audio/wav")
