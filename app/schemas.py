@@ -101,6 +101,7 @@ class KeyExpression(BaseModel):
     original: str
     translation: str
     intent: str
+    icon: str
     suggested_responses: list[str]
 
 

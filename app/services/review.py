@@ -1,4 +1,5 @@
 from app import schemas
+from app.services.classifier import INTENT_ICONS
 
 
 def generate_summary(turns: list[schemas.ConversationTurnResponse]) -> schemas.LearningSummary:
@@ -11,11 +12,13 @@ def generate_summary(turns: list[schemas.ConversationTurnResponse]) -> schemas.L
         if not turn.translated_text or turn.original_text in seen:
             continue
         seen.add(turn.original_text)
+        intent = turn.intent or "other"
         key_expressions.append(
             schemas.KeyExpression(
                 original=turn.original_text,
                 translation=turn.translated_text,
-                intent=turn.intent or "other",
+                intent=intent,
+                icon=INTENT_ICONS.get(intent, "❓"),
                 suggested_responses=turn.suggested_responses or [],
             )
         )
