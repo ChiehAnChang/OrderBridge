@@ -2,7 +2,10 @@ import os
 import base64
 import mimetypes
 import argparse
+from dotenv import load_dotenv
 from openai import OpenAI
+
+load_dotenv()
 
 
 def file_to_data_url(path: str) -> str:
@@ -19,7 +22,7 @@ def main():
     parser.add_argument("--image", required=True, help="Path to menu image")
     parser.add_argument(
         "--model",
-        default="Qwen/Qwen3.5-397B-A17B",
+        default=os.getenv("HF_MODEL_NAME", "Qwen/Qwen3.5-397B-A17B"),
         help="Hugging Face routed model name",
     )
     args = parser.parse_args()
@@ -29,7 +32,7 @@ def main():
         raise ValueError("HF_TOKEN is not set in the environment.")
 
     client = OpenAI(
-        base_url="https://router.huggingface.co/v1",
+        base_url=os.getenv("HF_BASE_URL", "https://router.huggingface.co/v1"),
         api_key=hf_token.strip(),
     )
 
