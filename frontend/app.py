@@ -35,7 +35,7 @@ with tab1:
         if st.button("🙋 ➡️ 📸", help="Take a photo", use_container_width=True):
             st.session_state.input_method = "camera"
     with col2:
-        if st.button("🙋 ➡️ 🖼️", help="Upload a photo", use_container_width=True):
+        if st.button("🙋 ➡️ 📤🖼️", help="Upload a photo", use_container_width=True):
             st.session_state.input_method = "upload"
 
     img_file = None
