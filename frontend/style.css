@@ -30,29 +30,30 @@ footer {visibility: hidden;}
 /* Large buttons for easy touch interaction */
 /* Force all button text and backgrounds for better contrast */
 [data-testid="stBaseButton-secondary"] {
-    background-color: #1e6b52 !important; /* Emerald Green */
-    color: #ffffff !important;
-    border: 2px solid #f7d273 !important; /* Gold border for contrast */
+    background-color: #f7d273 !important; /* Gold background for maximum pop against green */
+    color: #0d3b2e !important; /* Deep Green inner element color */
+    border: 3px solid #f7d273 !important; 
+    border-radius: 12px !important;
 }
 
-/* Force emojis and inner text to be strictly white/high-contrast, avoiding Streamlit default purple/blue tint */
+/* Force emojis and inner text to strictly match the contrasting color */
 [data-testid="stBaseButton-secondary"] * {
-    color: #ffffff !important; 
+    color: #0d3b2e !important; 
 }
 [data-testid="stBaseButton-secondary"] p {
-    color: #ffffff !important; 
+    color: #0d3b2e !important; 
     font-size: 32px !important;
-    font-weight: bold !important;
+    font-weight: 900 !important; /* Extra bold */
 }
 
 [data-testid="stBaseButton-secondary"]:hover {
-    background-color: #278c6b !important;
-    color: #ffffff !important;
-    border: 2px solid #ffffff !important;
+    background-color: #ffb300 !important; /* Brighter gold on hover */
+    color: #0d3b2e !important;
+    border: 3px solid #ffffff !important;
 }
 
 [data-testid="stBaseButton-secondary"]:active {
-    background-color: #18523f !important;
+    background-color: #d6b356 !important;
 }
 
 .stButton > button {
