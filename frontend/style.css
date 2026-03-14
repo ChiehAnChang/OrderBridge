@@ -28,26 +28,35 @@ header {visibility: hidden;}
 footer {visibility: hidden;}
 
 /* Large buttons for easy touch interaction */
+/* Force all button text and backgrounds for better contrast */
+[data-testid="stBaseButton-secondary"] {
+    background-color: #1e6b52 !important; /* Emerald Green */
+    color: #ffffff !important;
+    border: 2px solid #f7d273 !important; /* Gold border for contrast */
+}
+
+[data-testid="stBaseButton-secondary"] * {
+    color: #ffffff !important; /* Force emojis and inner spans to not match background */
+}
+
+[data-testid="stBaseButton-secondary"]:hover {
+    background-color: #278c6b !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+}
+
+[data-testid="stBaseButton-secondary"]:active {
+    background-color: #18523f !important;
+}
+
 .stButton > button {
     width: 100%;
     min-height: 80px;
     font-size: 24px !important;
     font-weight: bold;
     border-radius: 12px;
-    background-color: #1e6b52; /* Emerald Green */
-    color: #ffffff;
-    border: none;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     margin-top: 10px;
-}
-
-.stButton > button:hover {
-    background-color: #278c6b;
-    color: #ffffff;
-}
-
-.stButton > button:active {
-    background-color: #18523f;
 }
 
 /* Camera input / audio input container styling */
