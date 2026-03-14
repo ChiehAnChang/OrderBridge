@@ -106,3 +106,52 @@ footer {visibility: hidden;}
     animation: bounce 1.5s infinite;
     margin: 10px 0;
 }
+
+/* Mobile Responsive Design (iPhone 12 / Mobile Layout) */
+@media (max-width: 480px) {
+    /* Remove excessive Streamlit padding to maximize screen space */
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    h1 {
+        font-size: 28px !important;
+        text-align: center;
+    }
+    
+    h2, h3 {
+        font-size: 24px !important;
+        text-align: center;
+    }
+
+    /* Stack columns logically and give them breathing room */
+    [data-testid="column"] {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    .stButton > button {
+        min-height: 90px;
+        font-size: 32px !important; /* Make emojis bigger on mobile */
+    }
+
+    .food-card {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .food-title {
+        font-size: 22px;
+    }
+
+    .intent-text {
+        font-size: 26px;
+    }
+
+    .guide-arrow {
+        font-size: 50px;
+    }
+}
